@@ -4,6 +4,8 @@ Neovim lua configuration.
 
 --]]
 
+require('packer').init()
+
 vim.g.mapleader = ' '
 vim.g.localleader = ','
 
@@ -23,4 +25,16 @@ opt.tabstop = 2
 opt.shiftwidth = 2
 opt.softtabstop = 0
 opt.expandtab = false
+
+local use = require('packer').use
+use { 'wbthomason/packer.nvim' }
+use { 'ggandor/lightspeed.nvim' }
+use { 'folke/which-key.nvim',
+	config = function()
+		require('which-key').setup({
+
+		})
+	end
+}
+
 
