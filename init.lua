@@ -31,10 +31,46 @@ use { 'wbthomason/packer.nvim' }
 use { 'ggandor/lightspeed.nvim' }
 use { 'folke/which-key.nvim',
 	config = function()
-		require('which-key').setup({
+		require('which-key').setup {
 
-		})
+		}
 	end
 }
 
+use { 'nvim-telescope/telescope.nvim',
+	requires = { {'nvim-lua/plenary.nvim'} },
+	config = function()
+		require('telescope').setup {}
+		vim.api.nvim_set_keymap('n', '<leader>ff', '<cmd>Telescope find_files<cr>', { noremap = true })
+  	vim.api.nvim_set_keymap('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', { noremap = true })
+  	vim.api.nvim_set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<cr>', { noremap = true })
+  	vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', { noremap = true })
+	end
+}
+
+use { 'nvim-treesitter/nvim-treesitter',
+	config = function()
+		require('nvim-treesitter.configs').setup {
+			ensure_installed = 'maintained',
+			highlight = {
+				enable = true
+			},
+			indent = {
+				enable = true
+			},
+			incremental_selection = {
+				enable = true,
+				keymaps = {
+					init_selection = 'gnn',
+					node_incremental = 'grn',
+					scope_incremental = 'grc',
+					node_decremental = 'grm'
+				}
+			}
+		}
+		vim.opt.foldmethod = 'expr'
+		vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+	end,
+	run = ':TSUpdate'
+}
 
