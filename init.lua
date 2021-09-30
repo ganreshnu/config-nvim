@@ -29,6 +29,7 @@ opt.expandtab = false
 local use = require('packer').use
 use { 'wbthomason/packer.nvim' }
 use { 'ggandor/lightspeed.nvim' }
+
 use { 'folke/which-key.nvim',
 	config = function()
 		require('which-key').setup {
@@ -72,5 +73,11 @@ use { 'nvim-treesitter/nvim-treesitter',
 		vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
 	end,
 	run = ':TSUpdate'
+}
+
+use { 'neovim/nvim-lspconfig',
+	config = function()
+		local lsp = require('lspconfig')
+	end
 }
 
