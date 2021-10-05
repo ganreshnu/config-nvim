@@ -30,6 +30,13 @@ local use = require('packer').use
 use { 'wbthomason/packer.nvim' }
 use { 'ggandor/lightspeed.nvim' }
 
+use { 'RishabhRD/nvim-rdark',
+	requires = { {'tjdevries/colorbuddy.vim'} },
+	config = function()
+		require('colorbuddy').colorscheme('nvim-rdark')
+	end
+}
+
 use { 'folke/which-key.nvim',
 	config = function()
 		require('which-key').setup {
