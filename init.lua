@@ -92,6 +92,27 @@ use { 'nvim-treesitter/nvim-treesitter',
 use { 'neovim/nvim-lspconfig',
 	config = function()
 		local lsp = require('lspconfig')
+
+		require('lspconfig').sumneko_lua.setup({
+			cmd = { 'sumneko', '-E', root_path .. "/main.lua" },
+			settings = {
+				Lua = {
+					runtime = {
+						version = 'LuaJIT',
+						path = runtime_path
+					},
+					diagnostics = {
+						globals = { 'vim' }
+					},
+					workspace = {
+						library = vim.api.nvim_get_runtime_file("", true)
+					},
+					telemetry = {
+						enable = false
+					}
+				}
+			}
+		})
 	end
 }
 
