@@ -93,25 +93,26 @@ use { 'neovim/nvim-lspconfig',
 	config = function()
 		local lsp = require('lspconfig')
 
-		require('lspconfig').sumneko_lua.setup({
-			cmd = { 'sumneko', '-E', root_path .. "/main.lua" },
+		local sumneko_path = '/usr/local/share/sumneko'
+		lsp.sumneko_lua.setup({
+			cmd = { 'lua-language-server', '-E', sumneko_path .. "/main.lua" },
 			settings = {
 				Lua = {
-					runtime = {
-						version = 'LuaJIT',
-						path = runtime_path
-					},
-					diagnostics = {
-						globals = { 'vim' }
-					},
-					workspace = {
-						library = vim.api.nvim_get_runtime_file("", true)
-					},
+--					runtime = {
+--						version = 'LuaJIT',
+--						path = runtime_path
+--					},
 					telemetry = {
 						enable = false
 					}
 				}
-			}
+			},
+			on_init = function(client)
+				client.config.settings.Lua.diagnostics = { globals = 'vim' }
+				client.config.settings.Lua.workspace = {
+					library = vim.api.nvim_get_runtime_file("", true)
+				}
+			end
 		})
 	end
 }
