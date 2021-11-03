@@ -97,14 +97,23 @@ use { 'hrsh7th/nvim-cmp',
 		{ 'saadparwaiz1/cmp_luasnip',
 			requires = {
 				{ 'L3MON4D3/LuaSnip' }
-			} }
+			} },
+		{ 'onsails/lspkind-nvim' }
 	},
 	config = function()
+--		vim.opt.completeopt = 'menuone,noselect'
 		local cmp = require('cmp')
 		cmp.setup({
 			snippet = {
 				expand = function(args)
 					require('luasnip').lsp_expand(args.body)
+				end
+			},
+			formatting = {
+--				format = require('lspkind').cmp_format({ with_text = true })
+				format = function(entry, vim_item)
+					vim_item.menu = entry.source.name
+					return vim_item
 				end
 			},
 			sources = cmp.config.sources({
@@ -113,7 +122,7 @@ use { 'hrsh7th/nvim-cmp',
 --				{ name = 'buffer' }
 			})
 		})
-	end,
+	end
 }
 
 --vim.lsp.set_log_level('info')
@@ -154,6 +163,8 @@ use { 'neovim/nvim-lspconfig',
 		  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 		end
 
+		local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+
 		local runtime_path = vim.split(package.path, ';')
 		table.insert(runtime_path, "lua/?.lua")
 		table.insert(runtime_path, "lua/?/init.lua")
@@ -163,6 +174,7 @@ use { 'neovim/nvim-lspconfig',
 				image = 'lspcontainers/lua-language-server:latest',
 			}),
 			on_attach = on_attach,
+			capabilities = capabilities,
 			settings = {
 				Lua = {
 					runtime = {
@@ -188,7 +200,8 @@ use { 'neovim/nvim-lspconfig',
 			end,
 			cmd = require('lspcontainers').command('yamlls'),
 			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
-			on_attach = on_attach
+			on_attach = on_attach,
+			capabilities = capabilities
 		})
 
 		lsp.jsonls.setup({
@@ -197,7 +210,8 @@ use { 'neovim/nvim-lspconfig',
 			end,
 			cmd = require('lspcontainers').command('jsonls'),
 			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
-			on_attach = on_attach
+			on_attach = on_attach,
+			capabilities = capabilities
 		})
 
 	end
