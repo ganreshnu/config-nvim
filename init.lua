@@ -93,20 +93,30 @@ use { 'hrsh7th/nvim-cmp',
 	requires = {
 		{ 'hrsh7th/cmp-nvim-lsp' },
 		{ 'hrsh7th/cmp-cmdline' },
-		{ 'hrsh7th/cmp-buffer' }
+		{ 'hrsh7th/cmp-buffer' },
+		{ 'saadparwaiz1/cmp_luasnip',
+			requires = {
+				{ 'L3MON4D3/LuaSnip' }
+			} }
 	},
 	config = function()
 		local cmp = require('cmp')
 		cmp.setup({
+			snippet = {
+				expand = function(args)
+					require('luasnip').lsp_expand(args.body)
+				end
+			},
 			sources = cmp.config.sources({
 				{ name = 'nvim_lsp' },
+				{ name = 'luasnip' },
 --				{ name = 'buffer' }
 			})
 		})
 	end,
 }
 
-vim.lsp.set_log_level('info')
+--vim.lsp.set_log_level('info')
 
 use { 'neovim/nvim-lspconfig',
 	requires = { {'lspcontainers/lspcontainers.nvim'} },
@@ -144,11 +154,32 @@ use { 'neovim/nvim-lspconfig',
 		  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 		end
 
+		local runtime_path = vim.split(package.path, ';')
+		table.insert(runtime_path, "lua/?.lua")
+		table.insert(runtime_path, "lua/?/init.lua")
+
 		lsp.sumneko_lua.setup({
 			cmd = require('lspcontainers').command('sumneko_lua', {
-				image = 'lspcontainers/lua-language-server',
+				image = 'lspcontainers/lua-language-server:latest',
 			}),
-			on_attach = on_attach
+			on_attach = on_attach,
+			settings = {
+				Lua = {
+					runtime = {
+						version = 'LuaJIT',
+						path = runtime_path
+					},
+					diagnostics = {
+						globals = { 'vim' }
+					},
+					workspace = {
+						library = vim.api.nvim_get_runtime_file("", true)
+					},
+					telemetry = {
+						enable = false
+					}
+				}
+			}
 		})
 
 		lsp.yamlls.setup({
