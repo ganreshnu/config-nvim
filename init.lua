@@ -98,7 +98,6 @@ use { 'hrsh7th/nvim-cmp',
 			requires = {
 				{ 'L3MON4D3/LuaSnip' }
 			} },
-		{ 'onsails/lspkind-nvim' }
 	},
 	config = function()
 --		vim.opt.completeopt = 'menuone,noselect'
@@ -125,7 +124,7 @@ use { 'hrsh7th/nvim-cmp',
 	end
 }
 
---vim.lsp.set_log_level('info')
+--vim.lsp.set_log_level('trace')
 
 use { 'neovim/nvim-lspconfig',
 	requires = { {'lspcontainers/lspcontainers.nvim'} },
@@ -165,21 +164,37 @@ use { 'neovim/nvim-lspconfig',
 
 		local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
+		local docker_cmd = function(image, args, chdir)
+			local workdir = vim.fn.getcwd()
+			return vim.tbl_flatten({
+				"docker",
+				"run",
+--				"--init",
+				"--interactive",
+				"--rm",
+				(chdir and "--workdir="..workdir),
+				"--volume="..workdir..":"..workdir..":ro",
+				image,
+				args
+			})
+		end
+
 		local runtime_path = vim.split(package.path, ';')
 		table.insert(runtime_path, "lua/?.lua")
 		table.insert(runtime_path, "lua/?/init.lua")
 
 		lsp.sumneko_lua.setup({
-			cmd = require('lspcontainers').command('sumneko_lua', {
-				image = 'lspcontainers/lua-language-server:latest',
-			}),
+--			cmd = require('lspcontainers').command('sumneko_lua', {
+--				image = 'lspcontainers/lua-language-server:latest',
+--			}),
+			cmd = docker_cmd('lua-language-server'),
 			on_attach = on_attach,
 			capabilities = capabilities,
 			settings = {
 				Lua = {
 					runtime = {
 						version = 'LuaJIT',
-						path = runtime_path
+--						path = runtime_path
 					},
 					diagnostics = {
 						globals = { 'vim' }
@@ -195,9 +210,10 @@ use { 'neovim/nvim-lspconfig',
 		})
 
 		lsp.yamlls.setup({
-			before_init = function(params)
-				params.processId = vim.NIL
-			end,
+--			before_init = function(params)
+--				params.processId = vim.NIL
+--			end;
+
 			cmd = require('lspcontainers').command('yamlls'),
 			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
 			on_attach = on_attach,
@@ -205,11 +221,61 @@ use { 'neovim/nvim-lspconfig',
 		})
 
 		lsp.jsonls.setup({
-			before_init = function(params)
-				params.processId = vim.NIL
-			end,
+--			before_init = function(params)
+--				params.processId = vim.NIL
+--			end;
+
 			cmd = require('lspcontainers').command('jsonls'),
 			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.pyright.setup({
+--			before_init = function(params)
+--				params.processId = vim.NIL
+--			end;
+
+			cmd = require('lspcontainers').command('pyright'),
+			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.bashls.setup({
+--			before_init = function(params)
+--				params.processId = vim.NIL
+--			end;
+
+			cmd = require('lspcontainers').command('bashls'),
+			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.dockerls.setup({
+--			before_init = function (params)
+--				params.processId = vim.NIL
+--			end;
+
+			cmd = docker_cmd('rcjsuen/docker-langserver', { '--stdio' }, true),
+--			cmd = require('lspcontainers').command('dockerls'),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.html.setup({
+--			before_init = function (params)
+--				params.processId = vim.NIL
+--			end;
+
+			cmd = require('lspcontainers').command('html'),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.gopls.setup({
+			cmd = docker_cmd('gopls'),
 			on_attach = on_attach,
 			capabilities = capabilities
 		})
