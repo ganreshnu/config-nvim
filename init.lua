@@ -28,21 +28,26 @@ opt.signcolumn = 'number'
 opt.relativenumber = true
 
 -- tab options
---opt.tabstop = 2
---opt.shiftwidth = 2
---opt.softtabstop = 0
---opt.expandtab = false
+opt.tabstop = 3
+opt.shiftwidth = 3
+opt.softtabstop = 3
+opt.expandtab = false
 
 local use = require('packer').use
 use { 'wbthomason/packer.nvim' }
 use { 'ggandor/lightspeed.nvim' }
 
-use { 'RishabhRD/nvim-rdark',
-	requires = { {'tjdevries/colorbuddy.vim'} },
+use { 'tomasiser/vim-code-dark',
 	config = function()
-		require('colorbuddy').colorscheme('nvim-rdark')
+		vim.cmd('colorscheme codedark')
 	end
 }
+--use { 'RishabhRD/nvim-rdark',
+--	requires = { {'tjdevries/colorbuddy.vim'} },
+--	config = function()
+--		require('colorbuddy').colorscheme('nvim-rdark')
+--	end
+--}
 
 use { 'folke/which-key.nvim',
 	config = function()
@@ -56,10 +61,12 @@ use { 'nvim-telescope/telescope.nvim',
 	requires = { {'nvim-lua/plenary.nvim'} },
 	config = function()
 		require('telescope').setup {}
-		vim.api.nvim_set_keymap('n', '<leader>ff', '<cmd>Telescope find_files<cr>', { noremap = true })
-  	vim.api.nvim_set_keymap('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', { noremap = true })
-  	vim.api.nvim_set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<cr>', { noremap = true })
-  	vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', { noremap = true })
+		--require('telescope.builtin').git_files{}
+		vim.api.nvim_set_keymap('n', '<leader>fF', '<cmd>Telescope find_files<cr>', { noremap = true })
+		vim.api.nvim_set_keymap('n', '<leader>ff', '<cmd>Telescope git_files<cr>', { noremap = true })
+		vim.api.nvim_set_keymap('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', { noremap = true })
+		vim.api.nvim_set_keymap('n', '<leader>fb', '<cmd>Telescope buffers<cr>', { noremap = true })
+		vim.api.nvim_set_keymap('n', '<leader>fh', '<cmd>Telescope help_tags<cr>', { noremap = true })
 	end
 }
 
