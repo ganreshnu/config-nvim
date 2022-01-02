@@ -42,18 +42,10 @@ use { 'tomasiser/vim-code-dark',
 		vim.cmd('colorscheme codedark')
 	end
 }
---use { 'RishabhRD/nvim-rdark',
---	requires = { {'tjdevries/colorbuddy.vim'} },
---	config = function()
---		require('colorbuddy').colorscheme('nvim-rdark')
---	end
---}
 
 use { 'folke/which-key.nvim',
 	config = function()
-		require('which-key').setup {
-
-		}
+		require('which-key').setup {}
 	end
 }
 
@@ -61,7 +53,6 @@ use { 'nvim-telescope/telescope.nvim',
 	requires = { {'nvim-lua/plenary.nvim'} },
 	config = function()
 		require('telescope').setup {}
-		--require('telescope.builtin').git_files{}
 		vim.api.nvim_set_keymap('n', '<leader>fF', '<cmd>Telescope find_files<cr>', { noremap = true })
 		vim.api.nvim_set_keymap('n', '<leader>ff', '<cmd>Telescope git_files<cr>', { noremap = true })
 		vim.api.nvim_set_keymap('n', '<leader>fg', '<cmd>Telescope live_grep<cr>', { noremap = true })
@@ -131,10 +122,10 @@ use { 'hrsh7th/nvim-cmp',
 	end
 }
 
---vim.lsp.set_log_level('trace')
+vim.api.nvim_set_keymap('n', '<leader>ls', '<cmd>lua vim.lsp.stop_client(vim.lsp.get_active_clients(), true)<cr>', { noremap = true })
+--vim.lsp.set_log_level('info')
 
 use { 'neovim/nvim-lspconfig',
-	requires = { {'lspcontainers/lspcontainers.nvim'} },
 	config = function()
 		local lsp = require('lspconfig')
 		-- Use an on_attach function to only map the following keys
@@ -155,59 +146,84 @@ use { 'neovim/nvim-lspconfig',
 		  buf_set_keymap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
 		  buf_set_keymap('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
 		  buf_set_keymap('n', '<C-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-		  buf_set_keymap('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-		  buf_set_keymap('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-		  buf_set_keymap('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-		  buf_set_keymap('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-		  buf_set_keymap('n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-		  buf_set_keymap('n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-		  buf_set_keymap('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-		  buf_set_keymap('n', '<space>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
+		  buf_set_keymap('n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+		  buf_set_keymap('n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+		  buf_set_keymap('n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+		  buf_set_keymap('n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+		  buf_set_keymap('n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+		  buf_set_keymap('n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+		  buf_set_keymap('n', 'gR', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+		  buf_set_keymap('n', '<leader>e', '<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>', opts)
 		  buf_set_keymap('n', '[d', '<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>', opts)
 		  buf_set_keymap('n', ']d', '<cmd>lua vim.lsp.diagnostic.goto_next()<CR>', opts)
-		  buf_set_keymap('n', '<space>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
-		  buf_set_keymap('n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+		  buf_set_keymap('n', '<leader>q', '<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>', opts)
+		  buf_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+		end
+
+
+		local container_cmd = function(params)
+			local defaults = {
+				chdir = false,
+				volumes = {},
+				image = nil,
+				args = nil
+			}
+			local p = vim.tbl_extend("force", defaults, params)
+			local workdir = vim.fn.getcwd()
+			local cmd = {
+				"docker",
+				"run",
+				"--interactive",
+				"--rm",
+				"--pid=host"
+			}
+			if p.chdir then
+				table.insert(cmd, "--workdir="..workdir)
+			end
+			table.insert(cmd, "--volume="..workdir..":"..workdir..":ro")
+			for vol, option in ipairs(p.volumes) do
+				table.insert(cmd, "--volume="..vol..":"..vol..option)
+			end
+			table.insert(cmd, p.image)
+			if p.args then
+				table.insert(cmd, p.args)
+			end
+
+			return vim.tbl_flatten(cmd)
 		end
 
 		local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
-		local docker_cmd = function(image, args, chdir)
-			local workdir = vim.fn.getcwd()
-			return vim.tbl_flatten({
-				"docker",
-				"run",
---				"--init",
-				"--interactive",
-				"--rm",
-				(chdir and "--workdir="..workdir),
-				"--volume="..workdir..":"..workdir..":ro",
-				image,
-				args
-			})
-		end
-
-		local runtime_path = vim.split(package.path, ';')
-		table.insert(runtime_path, "lua/?.lua")
-		table.insert(runtime_path, "lua/?/init.lua")
-
 		lsp.sumneko_lua.setup({
---			cmd = require('lspcontainers').command('sumneko_lua', {
---				image = 'lspcontainers/lua-language-server:latest',
---			}),
-			cmd = docker_cmd('lua-language-server'),
+			cmd = container_cmd({
+				volumes = {
+					[vim.fn.expand('$VIMRUNTIME')] = ":ro",
+					[vim.fn.expand('~/.local/share/nvim')] = ":ro"
+				},
+				image = "lspcontainers/lua-language-server",
+			}),
 			on_attach = on_attach,
 			capabilities = capabilities,
+			-- default settings, can be overridden by a .luarc.json file
 			settings = {
 				Lua = {
 					runtime = {
 						version = 'LuaJIT',
---						path = runtime_path
+						path = {
+							"?.lua",
+							"?/init.lua",
+							"lua/?.lua",
+							"lua/?/init.lua"
+						}
 					},
 					diagnostics = {
 						globals = { 'vim' }
 					},
 					workspace = {
-						library = vim.api.nvim_get_runtime_file("", true)
+						library = {
+							vim.fn.expand('$VIMRUNTIME'),
+							vim.fn.expand('~/.local/share/nvim')
+						}
 					},
 					telemetry = {
 						enable = false
@@ -217,75 +233,112 @@ use { 'neovim/nvim-lspconfig',
 		})
 
 		lsp.yamlls.setup({
---			before_init = function(params)
---				params.processId = vim.NIL
---			end;
-
-			cmd = require('lspcontainers').command('yamlls'),
-			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
-			on_attach = on_attach,
-			capabilities = capabilities
-		})
-
-		lsp.jsonls.setup({
---			before_init = function(params)
---				params.processId = vim.NIL
---			end;
-
-			cmd = require('lspcontainers').command('jsonls'),
-			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
+			cmd = container_cmd({
+				image = "node-language-servers",
+				args = { "/usr/local/bin/yaml-language-server",  "--stdio" }
+			}),
 			on_attach = on_attach,
 			capabilities = capabilities
 		})
 
 		lsp.pyright.setup({
---			before_init = function(params)
---				params.processId = vim.NIL
---			end;
-
-			cmd = require('lspcontainers').command('pyright'),
-			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
-			on_attach = on_attach,
-			capabilities = capabilities
-		})
-
-		lsp.bashls.setup({
---			before_init = function(params)
---				params.processId = vim.NIL
---			end;
-
-			cmd = require('lspcontainers').command('bashls'),
-			root_dir = lsp.util.root_pattern(".git", vim.fn.getcwd()),
-			on_attach = on_attach,
-			capabilities = capabilities
-		})
-
-		lsp.dockerls.setup({
---			before_init = function (params)
---				params.processId = vim.NIL
---			end;
-
-			cmd = docker_cmd('rcjsuen/docker-langserver', { '--stdio' }, true),
---			cmd = require('lspcontainers').command('dockerls'),
+			cmd = container_cmd({
+				image = "node-language-servers",
+				args = { "/usr/local/bin/pyright-langserver", "--stdio" }
+			}),
 			on_attach = on_attach,
 			capabilities = capabilities
 		})
 
 		lsp.html.setup({
---			before_init = function (params)
---				params.processId = vim.NIL
---			end;
-
-			cmd = require('lspcontainers').command('html'),
+			cmd = container_cmd({
+				image = "node-language-servers",
+				args = { "/usr/local/bin/html-languageserver", "--stdio" }
+			}),
 			on_attach = on_attach,
 			capabilities = capabilities
 		})
 
-		lsp.gopls.setup({
-			cmd = docker_cmd('gopls'),
+		lsp.dockerls.setup({
+			cmd = container_cmd({
+				image = "rcjsuen/docker-langserver",
+				args =  { "--stdio" }
+			}),
 			on_attach = on_attach,
 			capabilities = capabilities
 		})
+
+		lsp.cssls.setup({
+			cmd = container_cmd({
+				image = "node-language-servers",
+				args = { "/usr/local/bin/css-languageserver", "--stdio" }
+			}),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.jsonls.setup({
+			cmd = container_cmd({
+				image = "node-language-servers",
+				args = { "/usr/local/bin/vscode-json-languageserver", "--stdio" }
+			}),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.bashls.setup({
+			cmd = container_cmd({
+				image = "node-language-servers",
+				args = { "/usr/local/bin/bash-language-server", "start" }
+			}),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.tsserver.setup({
+			cmd = container_cmd({
+				image = "node-language-servers",
+				args = { "/usr/local/bin/typescript-language-server", "--stdio" }
+			}),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.intelephense.setup({
+			cmd = container_cmd({
+				image = "node-language-servers",
+				args = { "/usr/local/bin/intelephense", "--stdio" }
+			}),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.vuels.setup({
+			cmd = container_cmd({
+				image = "node-language-servers",
+				args = { "/usr/local/bin/vls", "--stdio" }
+			}),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+		lsp.clangd.setup({
+			cmd = container_cmd({
+				image = "lspcontainers/clangd-language-server",
+				args = { "/usr/bin/clangd", "--background-index", "--compile-commands-dir=build", "--clang-tidy" },
+				volumes = {
+					[vim.fn.getcwd().."/.cache"] = nil
+				}
+			}),
+			on_attach = on_attach,
+			capabilities = capabilities
+		})
+
+--		lsp.gopls.setup({
+--			cmd = docker_cmd('gopls'),
+--			on_attach = on_attach,
+--			capabilities = capabilities
+--		})
 
 	end
 }
