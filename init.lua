@@ -265,7 +265,8 @@ use { 'neovim/nvim-lspconfig',
 				args =  { "--stdio" }
 			}),
 			on_attach = on_attach,
-			capabilities = capabilities
+			capabilities = capabilities,
+			root_dir = (function(_) return vim.fn.getcwd() end)
 		})
 
 		lsp.cssls.setup({
