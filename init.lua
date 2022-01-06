@@ -160,6 +160,9 @@ use { 'neovim/nvim-lspconfig',
 		  buf_set_keymap('n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
 		end
 
+		local before_init = function(params)
+			params.processId = vim.NIL
+		end
 
 		local container_cmd = function(params)
 			local defaults = {
@@ -175,7 +178,6 @@ use { 'neovim/nvim-lspconfig',
 				"run",
 				"--interactive",
 				"--rm",
-				"--pid=host"
 			}
 			if p.chdir then
 				table.insert(cmd, "--workdir="..workdir)
@@ -202,6 +204,7 @@ use { 'neovim/nvim-lspconfig',
 				},
 				image = "lspcontainers/lua-language-server",
 			}),
+			before_init = before_init,
 			on_attach = on_attach,
 			capabilities = capabilities,
 			-- default settings, can be overridden by a .luarc.json file
@@ -238,6 +241,7 @@ use { 'neovim/nvim-lspconfig',
 				args = { "/usr/local/bin/yaml-language-server",  "--stdio" }
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
@@ -247,6 +251,7 @@ use { 'neovim/nvim-lspconfig',
 				args = { "/usr/local/bin/pyright-langserver", "--stdio" }
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
@@ -256,6 +261,7 @@ use { 'neovim/nvim-lspconfig',
 				args = { "/usr/local/bin/html-languageserver", "--stdio" }
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
@@ -266,6 +272,7 @@ use { 'neovim/nvim-lspconfig',
 			}),
 			on_attach = on_attach,
 			capabilities = capabilities,
+			before_init = before_init,
 			root_dir = (function(_) return vim.fn.getcwd() end)
 		})
 
@@ -275,6 +282,7 @@ use { 'neovim/nvim-lspconfig',
 				args = { "/usr/local/bin/css-languageserver", "--stdio" }
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
@@ -284,6 +292,7 @@ use { 'neovim/nvim-lspconfig',
 				args = { "/usr/local/bin/vscode-json-languageserver", "--stdio" }
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
@@ -293,6 +302,7 @@ use { 'neovim/nvim-lspconfig',
 				args = { "/usr/local/bin/bash-language-server", "start" }
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
@@ -302,6 +312,7 @@ use { 'neovim/nvim-lspconfig',
 				args = { "/usr/local/bin/typescript-language-server", "--stdio" }
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
@@ -311,6 +322,7 @@ use { 'neovim/nvim-lspconfig',
 				args = { "/usr/local/bin/intelephense", "--stdio" }
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
@@ -320,6 +332,7 @@ use { 'neovim/nvim-lspconfig',
 				args = { "/usr/local/bin/vls", "--stdio" }
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
@@ -332,6 +345,7 @@ use { 'neovim/nvim-lspconfig',
 				}
 			}),
 			on_attach = on_attach,
+			before_init = before_init,
 			capabilities = capabilities
 		})
 
