@@ -338,7 +338,7 @@ use { 'neovim/nvim-lspconfig',
 
 		lsp.clangd.setup({
 			cmd = container_cmd({
-				image = "lspcontainers/clangd-language-server",
+				image = "buildtool",
 				args = { "/usr/bin/clangd", "--background-index", "--compile-commands-dir=build", "--clang-tidy" },
 				volumes = {
 					[vim.fn.getcwd().."/.cache"] = nil
