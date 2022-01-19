@@ -3,7 +3,6 @@
 Neovim lua configuration.
 
 --]]
-
 require('packer').init()
 
 vim.g.mapleader = ' '
@@ -61,31 +60,31 @@ use { 'nvim-telescope/telescope.nvim',
 	end
 }
 
-use { 'nvim-treesitter/nvim-treesitter',
-	config = function()
-		require('nvim-treesitter.configs').setup {
-			ensure_installed = 'maintained',
-			highlight = {
-				enable = true
-			},
-			indent = {
-				enable = true
-			},
-			incremental_selection = {
-				enable = true,
-				keymaps = {
-					init_selection = 'gnn',
-					node_incremental = 'grn',
-					scope_incremental = 'grc',
-					node_decremental = 'grm'
-				}
-			}
-		}
-		vim.opt.foldmethod = 'expr'
-		vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
-	end,
-	run = ':TSUpdate'
-}
+--use { 'nvim-treesitter/nvim-treesitter',
+--	config = function()
+--		require('nvim-treesitter.configs').setup {
+--			ensure_installed = 'maintained',
+--			highlight = {
+--				enable = true
+--			},
+--			indent = {
+--				enable = true
+--			},
+--			incremental_selection = {
+--				enable = true,
+--				keymaps = {
+--					init_selection = 'gnn',
+--					node_incremental = 'grn',
+--					scope_incremental = 'grc',
+--					node_decremental = 'grm'
+--				}
+--			}
+--		}
+--		vim.opt.foldmethod = 'expr'
+--		vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+--	end,
+--	run = ':TSUpdate'
+--}
 
 use { 'hrsh7th/nvim-cmp',
 	requires = {
@@ -349,11 +348,15 @@ use { 'neovim/nvim-lspconfig',
 			capabilities = capabilities
 		})
 
---		lsp.gopls.setup({
---			cmd = docker_cmd('gopls'),
---			on_attach = on_attach,
---			capabilities = capabilities
---		})
+		lsp.gopls.setup({
+			cmd = container_cmd({
+				image = "lspcontainers/gopls",
+				args = { "/root/go/bin/gopls" },
+			}),
+			on_attach = on_attach,
+			before_init = before_init,
+			capabilities = capabilities
+		})
 
 	end
 }
