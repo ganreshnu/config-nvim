@@ -36,11 +36,11 @@ local use = require('packer').use
 use { 'wbthomason/packer.nvim' }
 use { 'ggandor/lightspeed.nvim' }
 
-use { 'tomasiser/vim-code-dark',
-	config = function()
-		vim.cmd('colorscheme codedark')
-	end
-}
+--use { 'tomasiser/vim-code-dark',
+--	config = function()
+--		vim.cmd('colorscheme codedark')
+--	end
+--}
 
 use { 'folke/which-key.nvim',
 	config = function()
@@ -94,7 +94,8 @@ use { 'hrsh7th/nvim-cmp',
 		{ 'saadparwaiz1/cmp_luasnip',
 			requires = {
 				{ 'L3MON4D3/LuaSnip' }
-			} },
+			}
+		},
 	},
 	config = function()
 --		vim.opt.completeopt = 'menuone,noselect'
@@ -121,11 +122,31 @@ use { 'hrsh7th/nvim-cmp',
 	end
 }
 
-vim.api.nvim_set_keymap('n', '<leader>ls', '<cmd>lua vim.lsp.stop_client(vim.lsp.get_active_clients(), true)<cr>', { noremap = true })
 --vim.lsp.set_log_level('info')
+
+--use {
+--	'lewis6991/gitsigns.nvim',
+--	requires = {
+--		'nvim-lua/plenary.nvim'
+--	},
+--	config = function()
+--		require('gitsigns').setup()
+--	end
+--}
+
+--use {
+--	'glepnir/lspsaga.nvim',
+--	config = function()
+--		local saga = require('lspsaga')
+--		saga.init_lsp_saga {
+--
+--		}
+--	end
+--}
 
 use { 'neovim/nvim-lspconfig',
 	config = function()
+		vim.api.nvim_set_keymap('n', '<leader>ls', '<cmd>lua vim.lsp.stop_client(vim.lsp.get_active_clients(), true)<cr>', { noremap = true })
 		local lsp = require('lspconfig')
 		-- Use an on_attach function to only map the following keys
 		-- after the language server attaches to the current buffer
