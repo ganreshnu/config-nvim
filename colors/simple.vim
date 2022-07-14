@@ -14,7 +14,7 @@ highlight LineNrAbove	term=NONE cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NON
 highlight LineNr			term=NONE cterm=NONE ctermfg=Grey ctermbg=NONE gui=NONE guifg=Grey guibg=NONE
 highlight LineNrBelow	term=NONE cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
 highlight NonText			term=NONE cterm=NONE ctermfg=White ctermbg=NONE gui=None guifg=White guibg=NONE
-highlight PMenu			term=NONE cterm=NONE ctermfg=NONE ctermbg=DarkMagenta gui=None guifg=NONE guibg=DarkMagenta
+highlight Pmenu			term=NONE cterm=NONE ctermfg=NONE ctermbg=DarkMagenta gui=None guifg=NONE guibg=DarkMagenta
 highlight Search			term=NONE cterm=NONE ctermfg=Black ctermbg=DarkYellow gui=None guifg=NONE guibg=DarkYellow
 highlight StatusLine		term=reverse cterm=NONE ctermfg=Black ctermbg=LightGrey gui=NONE guifg=NONE guibg=LightGrey
 highlight StatusLineNC	term=NONE cterm=NONE ctermfg=NONE ctermbg=DarkGrey gui=NONE guifg=NONE guibg=DarkGrey
