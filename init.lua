@@ -34,7 +34,12 @@ opt.expandtab = false
 
 local use = require('packer').use
 use { 'wbthomason/packer.nvim' }
-use { 'ggandor/lightspeed.nvim' }
+--use { 'ggandor/lightspeed.nvim' }
+use { 'ggandor/leap.nvim',
+	config = function()
+		require('leap').set_default_keymaps()
+	end
+}
 
 --use { 'tomasiser/vim-code-dark',
 --	config = function()
