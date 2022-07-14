@@ -58,31 +58,31 @@ use { 'nvim-telescope/telescope.nvim',
 	end
 }
 
---use { 'nvim-treesitter/nvim-treesitter',
---	config = function()
---		require('nvim-treesitter.configs').setup {
---			ensure_installed = 'maintained',
---			highlight = {
---				enable = true
---			},
---			indent = {
---				enable = true
---			},
---			incremental_selection = {
---				enable = true,
---				keymaps = {
---					init_selection = 'gnn',
---					node_incremental = 'grn',
---					scope_incremental = 'grc',
---					node_decremental = 'grm'
---				}
---			}
---		}
---		vim.opt.foldmethod = 'expr'
---		vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
---	end,
---	run = ':TSUpdate'
---}
+use { 'nvim-treesitter/nvim-treesitter',
+	config = function()
+		require('nvim-treesitter.configs').setup {
+			ensure_installed = {},
+			highlight = {
+				enable = true
+			},
+			indent = {
+				enable = true
+			},
+			incremental_selection = {
+				enable = true,
+				keymaps = {
+					init_selection = 'gnn',
+					node_incremental = 'grn',
+					scope_incremental = 'grc',
+					node_decremental = 'grm'
+				}
+			}
+		}
+		vim.opt.foldmethod = 'expr'
+		vim.opt.foldexpr = 'nvim_treesitter#foldexpr()'
+	end,
+	run = ':TSUpdate'
+}
 
 vim.cmd("colorscheme simple")
 use { 'hrsh7th/nvim-cmp',
