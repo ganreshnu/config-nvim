@@ -34,18 +34,11 @@ opt.expandtab = false
 
 local use = require('packer').use
 use { 'wbthomason/packer.nvim' }
---use { 'ggandor/lightspeed.nvim' }
 use { 'ggandor/leap.nvim',
 	config = function()
 		require('leap').set_default_keymaps()
 	end
 }
-
---use { 'tomasiser/vim-code-dark',
---	config = function()
---		vim.cmd('colorscheme codedark')
---	end
---}
 
 use { 'folke/which-key.nvim',
 	config = function()
@@ -91,6 +84,7 @@ use { 'nvim-telescope/telescope.nvim',
 --	run = ':TSUpdate'
 --}
 
+vim.cmd("colorscheme simple")
 use { 'hrsh7th/nvim-cmp',
 	requires = {
 		{ 'hrsh7th/cmp-nvim-lsp' },
